@@ -1,0 +1,312 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package naqiku.application;
+
+import java.awt.Color;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.sql.ResultSet;
+import javax.swing.table.DefaultTableModel;
+
+/**
+ *
+ * @author Susa
+ */
+public class barangForm extends javax.swing.JFrame {
+
+    /**
+     * Creates new form barangForm
+     */
+    public barangForm() {
+        initComponents();
+        Config.koneksi();
+        comboBox();
+        tampilBarang("");
+        
+        txt_cari.setBackground(new Color(0, 0, 0, 0));
+    }
+    
+    private void tampilBarang(String cari){
+        DefaultTableModel model = (DefaultTableModel) tbl_barang.getModel();
+        model.setRowCount(0);
+        try {
+            String filter = "";
+            String fWarna = "";
+            String fBahan = "";
+            String fJenis = "";
+            
+            
+            if(!cari.equals("")){
+                filter = " AND kd_barang LIKE '%"+cari+"%' OR nama_barang LIKE '%"+cari+"%'";
+            }
+
+            if(!cb_warna.getSelectedItem().equals("WARNA")){
+                fWarna = " AND warna_barang = '"+cb_warna.getSelectedItem()+"'";
+            }
+            if(!cb_bahan.getSelectedItem().equals("BAHAN")){
+                fBahan = " AND bahan_barang = '"+cb_bahan.getSelectedItem()+"'";
+            }
+            if(!cb_jenis.getSelectedItem().equals("JENIS")){
+                try {
+                    ResultSet row = Config.ambilData("SELECT id_jenis FROM jenis WHERE nama_jenis = '"+cb_jenis.getSelectedItem()+"'");                    
+                    fJenis = " AND id_jenis = '"+row.getString(1)+"'";
+                } catch (Exception e) {
+                
+                }
+            }
+            
+            ResultSet row = Config.ambilData("SELECT kd_barang, nama_barang, warna_barang, bahan_barang, nama_jenis, harga_beli, harga_jual, stok  FROM barang JOIN jenis ON barang.id_jenis = jenis.id_jenis WHERE stok >= 0" + filter + fWarna + fBahan + fJenis);
+            while(row.next()){                
+                Object data[] = new Object[]{
+                    row.getString(1),
+                    row.getString(2),
+                    row.getString(3),
+                    row.getString(4),
+                    row.getString(5),
+                    row.getString(6),
+                    row.getString(7),
+                    row.getString(8)
+                };
+                model.addRow(data);
+            }
+        } catch (Exception e) {
+            System.out.println("Error Ambil Data: " + e.getMessage());
+        }
+    }
+    
+    private void comboBox(){
+        cb_bahan.removeAllItems();
+        cb_warna.removeAllItems();
+        cb_jenis.removeAllItems();
+        
+        cb_bahan.addItem("BAHAN");
+        cb_jenis.addItem("JENIS");
+        cb_warna.addItem("WARNA");
+        
+        String sql = "SELECT DISTINCT warna_barang FROM barang";
+        try {
+            ResultSet row = Config.ambilData(sql);
+            while (row.next()) {                
+                cb_warna.addItem(row.getString(1));
+            }
+        } catch (Exception e) {
+            
+        }
+        
+        sql = "SELECT DISTINCT bahan_barang FROM barang";
+        try {
+            ResultSet row = Config.ambilData(sql);
+            while (row.next()) {                
+                cb_bahan.addItem(row.getString(1));
+            }
+        } catch (Exception e) {
+            
+        }
+        
+        sql = "SELECT DISTINCT nama_jenis FROM jenis";
+        try {
+            ResultSet row = Config.ambilData(sql);
+            while (row.next()) {                
+                cb_jenis.addItem(row.getString(1));
+            }
+        } catch (Exception e) {
+            
+        }
+        
+        cb_bahan.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent ie) {
+                if (ie.getStateChange() == ItemEvent.SELECTED) {
+                    tampilBarang("");
+                }
+            }
+        });
+        cb_warna.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent ie) {
+                if (ie.getStateChange() == ItemEvent.SELECTED) {
+                    tampilBarang("");
+                }
+            }
+        });
+        cb_jenis.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent ie) {
+                if (ie.getStateChange() == ItemEvent.SELECTED) {
+                    tampilBarang("");
+                }
+            }
+        });
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        btn_barang = new javax.swing.JLabel();
+        btn_supplier = new javax.swing.JLabel();
+        btn_transaksi = new javax.swing.JLabel();
+        btn_pengaturan = new javax.swing.JLabel();
+        btn_datatoko = new javax.swing.JLabel();
+        btn_logout = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tbl_barang = new rojeru_san.complementos.RSTableMetro();
+        btn_hapus = new javax.swing.JLabel();
+        btn_edit = new javax.swing.JLabel();
+        btn_tambah = new javax.swing.JLabel();
+        cb_jenis = new naqiku.components.ComboBoxSuggestion();
+        cb_warna = new naqiku.components.ComboBoxSuggestion();
+        cb_bahan = new naqiku.components.ComboBoxSuggestion();
+        txt_cari = new javax.swing.JTextField();
+        btn_refresh = new rojerusan.RSMaterialButtonRectangle();
+        frameBackground = new javax.swing.JLabel();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setUndecorated(true);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        getContentPane().add(btn_barang, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 280, 200, 80));
+        getContentPane().add(btn_supplier, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 370, 200, 80));
+        getContentPane().add(btn_transaksi, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 190, 200, 90));
+        getContentPane().add(btn_pengaturan, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 530, 200, 60));
+        getContentPane().add(btn_datatoko, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 450, 200, 70));
+        getContentPane().add(btn_logout, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 660, 70, 80));
+
+        tbl_barang.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID Barang", "Nama Barang", "Warna Barang", "Bahan", "Jenis", "Harga Beli", "Harga Jual", "Stok"
+            }
+        ));
+        tbl_barang.setColorBackgoundHead(new java.awt.Color(232, 60, 60));
+        tbl_barang.setColorBordeFilas(new java.awt.Color(255, 255, 255));
+        tbl_barang.setColorBordeHead(new java.awt.Color(255, 255, 255));
+        tbl_barang.setColorFilasBackgound1(new java.awt.Color(255, 71, 71));
+        tbl_barang.setColorFilasBackgound2(new java.awt.Color(255, 71, 71));
+        tbl_barang.setColorFilasForeground1(new java.awt.Color(255, 255, 255));
+        tbl_barang.setColorFilasForeground2(new java.awt.Color(255, 255, 255));
+        tbl_barang.setGrosorBordeFilas(0);
+        tbl_barang.setGrosorBordeHead(0);
+        tbl_barang.setShowHorizontalLines(false);
+        tbl_barang.setShowVerticalLines(false);
+        jScrollPane2.setViewportView(tbl_barang);
+
+        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 140, 1100, 580));
+        getContentPane().add(btn_hapus, new org.netbeans.lib.awtextra.AbsoluteConstraints(1270, 30, 40, 60));
+        getContentPane().add(btn_edit, new org.netbeans.lib.awtextra.AbsoluteConstraints(1150, 30, 50, 60));
+        getContentPane().add(btn_tambah, new org.netbeans.lib.awtextra.AbsoluteConstraints(1210, 30, 50, 60));
+
+        getContentPane().add(cb_jenis, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 100, 150, 30));
+
+        getContentPane().add(cb_warna, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 100, 150, 30));
+
+        getContentPane().add(cb_bahan, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 100, 150, 30));
+
+        txt_cari.setBorder(null);
+        txt_cari.setOpaque(false);
+        txt_cari.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txt_cariKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txt_cariKeyReleased(evt);
+            }
+        });
+        getContentPane().add(txt_cari, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 100, 270, 30));
+
+        btn_refresh.setBackground(new java.awt.Color(232, 60, 60));
+        btn_refresh.setText("REFRESH");
+        btn_refresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_refreshActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btn_refresh, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 100, 80, 40));
+
+        frameBackground.setIcon(new javax.swing.ImageIcon(getClass().getResource("/naqiku.frames/Tabel Barang.png"))); // NOI18N
+        getContentPane().add(frameBackground, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void txt_cariKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_cariKeyPressed
+        // TODO add your handling code here:
+        tampilBarang(txt_cari.getText());
+    }//GEN-LAST:event_txt_cariKeyPressed
+
+    private void txt_cariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_cariKeyReleased
+        tampilBarang(txt_cari.getText());
+
+    }//GEN-LAST:event_txt_cariKeyReleased
+
+    private void btn_refreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_refreshActionPerformed
+        // TODO add your handling code here:
+        txt_cari.setText("");
+        cb_bahan.setSelectedItem("BAHAN");
+        cb_warna.setSelectedItem("WARNA");
+        cb_jenis.setSelectedItem("JENIS");
+        
+        tampilBarang("");
+    }//GEN-LAST:event_btn_refreshActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracframeBackgroundjavase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(barangForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(barangForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(barangForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(barangForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new barangForm().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel btn_barang;
+    private javax.swing.JLabel btn_datatoko;
+    private javax.swing.JLabel btn_edit;
+    private javax.swing.JLabel btn_hapus;
+    private javax.swing.JLabel btn_logout;
+    private javax.swing.JLabel btn_pengaturan;
+    private rojerusan.RSMaterialButtonRectangle btn_refresh;
+    private javax.swing.JLabel btn_supplier;
+    private javax.swing.JLabel btn_tambah;
+    private javax.swing.JLabel btn_transaksi;
+    private naqiku.components.ComboBoxSuggestion cb_bahan;
+    private naqiku.components.ComboBoxSuggestion cb_jenis;
+    private naqiku.components.ComboBoxSuggestion cb_warna;
+    private javax.swing.JLabel frameBackground;
+    private javax.swing.JScrollPane jScrollPane2;
+    private rojeru_san.complementos.RSTableMetro tbl_barang;
+    private javax.swing.JTextField txt_cari;
+    // End of variables declaration//GEN-END:variables
+}
